@@ -1,6 +1,7 @@
 package com.newstest.android.newstest.data.network;
 
 
+import com.newstest.android.newstest.data.network.entity.ApiResponse;
 import com.newstest.android.newstest.data.network.entity.Article;
 import com.newstest.android.newstest.utils.Urls;
 
@@ -13,5 +14,5 @@ import retrofit2.http.GET;
 public interface ApiCallInterface {
 
     @GET(Urls.NEWSLIST)
-    Observable<List<Article>> getNewsList();
+    Observable <ApiResponse> getNewsList();
 }

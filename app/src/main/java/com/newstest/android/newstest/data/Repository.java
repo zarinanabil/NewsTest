@@ -1,6 +1,7 @@
 package com.newstest.android.newstest.data;
 
 import com.newstest.android.newstest.data.network.ApiCallInterface;
+import com.newstest.android.newstest.data.network.entity.ApiResponse;
 import com.newstest.android.newstest.data.network.entity.Article;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class Repository {
     /*
      * method to call news api
      * */
-    public Observable<List<Article>> getNewsList() {
+    public Observable <ApiResponse> getNewsList() {
         return apiCallInterface.getNewsList();
     }
 
