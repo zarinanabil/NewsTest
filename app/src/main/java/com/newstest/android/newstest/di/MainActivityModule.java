@@ -22,7 +22,7 @@ public class MainActivityModule {
     @ActivityScope
     NewsListAdapter getNewsListAdapter(Picasso picasso) {
 
-        return new NewsListAdapter(picasso);
+        return new NewsListAdapter(picasso,mainActivity);
     }
 
     @Provides

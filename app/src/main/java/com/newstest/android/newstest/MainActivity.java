@@ -2,6 +2,7 @@ package com.newstest.android.newstest;
 
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -27,7 +28,6 @@ import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity implements NewsListAdapter.OnNewsItemClickListener {
 
-
     private RecyclerView recyclerView;
 
     @Inject
@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
 
     ProgressDialog progressDialog;
 
+    SwipeRefreshLayout pullToRefresh;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
 
         recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         recyclerView.setHasFixedSize(true);
+
+        pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.pull_to_refresh);
 
         progressDialog = Constant.getProgressDialog(this, "Please wait...");
 
@@ -71,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(NewsListViewModel.class);
 
         viewModel.getResponse().observe(this, this::consumeResponse);
@@ -79,6 +82,11 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
         viewModel.getNewsLiveDataList().observe(this, this::showNewsList);
 
         viewModel.getNewsList();
+
+        pullToRefresh.setOnRefreshListener(() -> {
+            viewModel.getNewsList();
+            pullToRefresh.setRefreshing(false);
+        });
 
         recyclerView.setAdapter(newsListAdapter);
 

@@ -3,6 +3,7 @@ package com.newstest.android.newstest;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.util.DisplayMetrics;
 
 import com.newstest.android.newstest.di.AppComponent;
 import com.newstest.android.newstest.di.AppModule;
@@ -18,7 +19,6 @@ public class MyApplication extends Application {
         super.onCreate();
         context = this;
         appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).utilsModule(new UtilsModule()).build();
-
     }
 
     public AppComponent getAppComponent() {
