@@ -172,9 +172,23 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
         protected void hideDetailFragment()
         {
             pullToRefresh.setVisibility(View.VISIBLE);
-
             getSupportFragmentManager().beginTransaction().remove(detailFragment).commit();
             detailFrameLayout.setVisibility(View.GONE);
         }
+
+
+    @Override
+    public void onBackPressed() {
+
+        int count = getSupportFragmentManager().getFragments().size();
+
+        if (count == 0) {
+            super.onBackPressed();
+
+        } else {
+            hideDetailFragment();
+        }
+
+    }
 
     }

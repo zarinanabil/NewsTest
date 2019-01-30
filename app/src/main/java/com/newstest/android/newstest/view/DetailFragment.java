@@ -1,7 +1,7 @@
 package com.newstest.android.newstest.view;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,7 +20,7 @@ import java.util.Objects;
 
 public class DetailFragment extends Fragment {
 
-    Button buttonBack;
+    Button buttonBack,buttonContinueReading;
     ImageView imageViewNews;
     TextView textViewTitle,textViewPublishDate,textViewDescription;
 
@@ -36,6 +36,19 @@ public class DetailFragment extends Fragment {
         initView(view);
         initListeners();
         setData();
+    }
+
+
+    public void onClickContinueReading () {
+        MainActivity context = ((MainActivity)Objects.requireNonNull(getActivity()));
+        Article article = context.newsviewModel.getNewsLiveDataArticle().getValue();
+        goToUrl(article.getUrl());
+    }
+
+    private void goToUrl (String url) {
+        Uri uriUrl = Uri.parse(url);
+        Intent launchBrowser = new Intent(Intent.ACTION_VIEW, uriUrl);
+        startActivity(launchBrowser);
     }
 
     private void setData() {
@@ -55,12 +68,14 @@ public class DetailFragment extends Fragment {
     private void initListeners() {
 
         buttonBack.setOnClickListener(v -> onDetailBackPressed());
+        buttonContinueReading.setOnClickListener(v -> onClickContinueReading());
 
     }
 
     private void initView(View view) {
 
         buttonBack = view.findViewById(R.id.button_back);
+        buttonContinueReading=view.findViewById(R.id.button_continue);
         imageViewNews=view.findViewById(R.id.news_imageview);
         textViewTitle=view.findViewById(R.id.news_title);
         textViewDescription=view.findViewById(R.id.news_description);

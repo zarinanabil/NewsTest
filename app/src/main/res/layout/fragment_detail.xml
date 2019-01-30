@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:orientation="vertical" android:weightSum="10" >
+    android:layout_height="match_parent" android:orientation="vertical" android:weightSum="10">
+
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -26,21 +27,22 @@
 
         </FrameLayout>
 
-
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent" android:layout_weight="6"
-        android:layout_height="0dp" android:orientation="vertical" android:padding="@dimen/detail_padding_5">
+        android:layout_height="0dp" android:orientation="vertical" android:layout_margin="@dimen/detail_padding_5">
 
 
         <TextView
+            android:text="dsds"
             android:id="@+id/news_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         <TextView
+            android:text="dsds"
             android:id="@+id/news_publish_date"
             android:layout_width="match_parent"
             android:paddingTop="@dimen/detail_padding_10"
@@ -54,13 +56,33 @@
             android:layout_height="2dp"
             android:background="#c0c0c0"/>
 
+       <ScrollView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content" android:orientation="vertical">
+
         <TextView
+            android:text="dsds"
             android:id="@+id/news_description"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:textAppearance="?android:attr/textAppearanceMedium"/>
+            android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium"/>
 
+           <Button
+               android:id="@+id/button_continue"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="@string/continue_reading"
+               android:autoLink="web"
+               android:clickable="true"
+               android:linksClickable="true"
+               android:background="@android:color/transparent"/>
+       </LinearLayout>
+
+       </ScrollView>
 
     </LinearLayout>
 
-
-</LinearLayout>
+    </LinearLayout>
