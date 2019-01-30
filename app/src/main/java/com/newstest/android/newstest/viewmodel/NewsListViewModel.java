@@ -16,6 +16,7 @@ public class NewsListViewModel extends ViewModel {
     private final CompositeDisposable disposables = new CompositeDisposable();
     private final MutableLiveData<ApiResponse> responseLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Article>> newsList = new MutableLiveData<>();
+    private MutableLiveData <Article> newsArticle = new MutableLiveData<>();
 
     public NewsListViewModel(Repository repository) {
         this.repository = repository;
@@ -32,6 +33,7 @@ public class NewsListViewModel extends ViewModel {
 
         disposables.add(repository.getNewsList()
                 .subscribeOn(Schedulers.io())
+                .unsubscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe((d) -> responseLiveData.setValue(ApiResponse.loading()))
                 .subscribe(
@@ -51,5 +53,12 @@ public class NewsListViewModel extends ViewModel {
         return newsList;
     }
 
+    public void setNewsLiveDataArticle(Article newsarticle) {
+        newsArticle.setValue(newsarticle);
+    }
+
+    public MutableLiveData <Article> getNewsLiveDataArticle() {
+        return newsArticle;
+    }
 
 }

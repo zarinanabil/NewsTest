@@ -1,4 +1,4 @@
-package com.newstest.android.newstest;
+package com.newstest.android.newstest.view;
 
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
@@ -9,8 +9,12 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.newstest.android.newstest.MyApplication;
+import com.newstest.android.newstest.R;
 import com.newstest.android.newstest.adapter.NewsListAdapter;
 import com.newstest.android.newstest.data.network.entity.ApiResponse;
 import com.newstest.android.newstest.data.network.entity.Article;
@@ -30,21 +34,28 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
 
     private RecyclerView recyclerView;
 
+    public static final String DETAIL_FRAGMENT_TAG="com.newstest.android.newstest.view.detailfragment";
+
     @Inject
     LinearLayoutManager layoutManager;
 
     @Inject
     NewsListAdapter newsListAdapter;
 
+    @Inject
+    DetailFragment detailFragment;
+
     ViewModelFactory viewModelFactory;
 
     Picasso picasso;
 
-    NewsListViewModel viewModel;
+    NewsListViewModel newsviewModel;
 
     ProgressDialog progressDialog;
 
     SwipeRefreshLayout pullToRefresh;
+
+    FrameLayout detailFrameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
 
         picasso = (Picasso) ((MyApplication) getApplication()).getAppComponent().getPicasso();
 
+        detailFrameLayout =  (FrameLayout) findViewById(R.id.detail_fragment_container);
+
         MainActivityComponent mainActivityComponent = DaggerMainActivityComponent.builder()
                 .mainActivityModule(new MainActivityModule(this)).appComponent(MyApplication.get(this).getAppComponent()).build();
 
@@ -75,16 +88,16 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(NewsListViewModel.class);
+        newsviewModel = ViewModelProviders.of(this, viewModelFactory).get(NewsListViewModel.class);
 
-        viewModel.getResponse().observe(this, this::consumeResponse);
+        newsviewModel.getResponse().observe(this, this::consumeResponse);
 
-        viewModel.getNewsLiveDataList().observe(this, this::showNewsList);
+        newsviewModel.getNewsLiveDataList().observe(this, this::showNewsList);
 
-        viewModel.getNewsList();
+        newsviewModel.getNewsList();
 
         pullToRefresh.setOnRefreshListener(() -> {
-            viewModel.getNewsList();
+            newsviewModel.getNewsList();
             pullToRefresh.setRefreshing(false);
         });
 
@@ -131,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
         {
             if (!(response == null || response.isEmpty())) {
                 Log.d("response=", response.toString());
-                viewModel.getNewsLiveDataList().setValue(response);
+                newsviewModel.getNewsLiveDataList().setValue(response);
 
             } else {
                 Toast.makeText(MainActivity.this, getResources().getString(R.string.errorString), Toast.LENGTH_SHORT).show();
@@ -142,5 +155,26 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
         public void onItemClicked (Article article){
             Toast.makeText(MainActivity.this, article.getTitle(), Toast.LENGTH_LONG).show();
 
+            newsviewModel.setNewsLiveDataArticle(article);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.detail_fragment_container, detailFragment,DETAIL_FRAGMENT_TAG)
+                    .commit();
+
+            showDetailFragment();
         }
+
+        private void showDetailFragment()
+        {
+            detailFrameLayout.setVisibility(View.VISIBLE);
+            pullToRefresh.setVisibility(View.GONE);
+        }
+
+        protected void hideDetailFragment()
+        {
+            pullToRefresh.setVisibility(View.VISIBLE);
+
+            getSupportFragmentManager().beginTransaction().remove(detailFragment).commit();
+            detailFrameLayout.setVisibility(View.GONE);
+        }
+
     }

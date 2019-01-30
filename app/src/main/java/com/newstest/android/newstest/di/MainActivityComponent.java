@@ -1,7 +1,7 @@
 package com.newstest.android.newstest.di;
 
 
-import com.newstest.android.newstest.MainActivity;
+import com.newstest.android.newstest.view.MainActivity;
 
 import dagger.Component;
 
