@@ -6,7 +6,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp" android:layout_weight="4" android:background="@color/color_light_grey">
+        android:layout_height="0dp" android:layout_weight="4" android:background="@color/colorLightGrey">
 
         <ImageView
             android:id="@+id/news_imageview"

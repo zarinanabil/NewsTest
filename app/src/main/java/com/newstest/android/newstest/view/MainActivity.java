@@ -30,11 +30,20 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity implements NewsListAdapter.OnNewsItemClickListener {
 
-    private RecyclerView recyclerView;
+    @BindView(R.id.my_recycler_view)
+    RecyclerView recyclerView;
 
-    public static final String DETAIL_FRAGMENT_TAG="com.newstest.android.newstest.view.detailfragment";
+
+    @BindView(R.id.pull_to_refresh)
+    SwipeRefreshLayout pullToRefresh;
+
+    @BindView(R.id.detail_fragment_container)
+    FrameLayout detailFrameLayout;
 
     @Inject
     LinearLayoutManager layoutManager;
@@ -53,9 +62,6 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
 
     ProgressDialog progressDialog;
 
-    SwipeRefreshLayout pullToRefresh;
-
-    FrameLayout detailFrameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,18 +73,13 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
 
     private void initviews() {
 
-        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        recyclerView.setHasFixedSize(true);
+        ButterKnife.bind(this);
 
-        pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.pull_to_refresh);
-
-        progressDialog = Constant.getProgressDialog(this, "Please wait...");
+        progressDialog = Constant.getProgressDialog(this, R.string.please_wait);
 
         viewModelFactory = (ViewModelFactory) ((MyApplication) getApplication()).getAppComponent().getViewModelFactory();
 
         picasso = (Picasso) ((MyApplication) getApplication()).getAppComponent().getPicasso();
-
-        detailFrameLayout =  (FrameLayout) findViewById(R.id.detail_fragment_container);
 
         MainActivityComponent mainActivityComponent = DaggerMainActivityComponent.builder()
                 .mainActivityModule(new MainActivityModule(this)).appComponent(MyApplication.get(this).getAppComponent()).build();
@@ -94,11 +95,23 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
 
         newsviewModel.getNewsLiveDataList().observe(this, this::showNewsList);
 
-        newsviewModel.getNewsList();
-
-        pullToRefresh.setOnRefreshListener(() -> {
+        if(Constant.checkInternetConnection(this)) {
             newsviewModel.getNewsList();
+        }
+        else
+        {
+            Constant.showToast(this,R.string.network_error);
+        }
+        pullToRefresh.setOnRefreshListener(() -> {
+            if(Constant.checkInternetConnection(this)) {
+                newsviewModel.getNewsList();
+            }
+            else
+            {
+                Constant.showToast(this,R.string.network_error);
+            }
             pullToRefresh.setRefreshing(false);
+
         });
 
         recyclerView.setAdapter(newsListAdapter);
@@ -129,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
 
             case ERROR:
                 progressDialog.dismiss();
-                Toast.makeText(MainActivity.this, getResources().getString(R.string.errorString), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.error_string), Toast.LENGTH_SHORT).show();
                 break;
 
             default:
@@ -147,20 +160,26 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
                 newsviewModel.getNewsLiveDataList().setValue(response);
 
             } else {
-                Toast.makeText(MainActivity.this, getResources().getString(R.string.errorString), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.error_string), Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         public void onItemClicked (Article article){
-            Toast.makeText(MainActivity.this, article.getTitle(), Toast.LENGTH_LONG).show();
 
-            newsviewModel.setNewsLiveDataArticle(article);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.detail_fragment_container, detailFragment,DETAIL_FRAGMENT_TAG)
-                    .commit();
+            if(Constant.checkInternetConnection(this))
+            {
+                newsviewModel.setNewsLiveDataArticle(article);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.detail_fragment_container, detailFragment)
+                        .commit();
 
-            showDetailFragment();
+                showDetailFragment();
+            }
+            else
+            {
+                Constant.showToast(this,R.string.network_error);
+            }
         }
 
         private void showDetailFragment()

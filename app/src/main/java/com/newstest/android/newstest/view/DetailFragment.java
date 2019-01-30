@@ -15,34 +15,55 @@ import android.widget.TextView;
 
 import com.newstest.android.newstest.R;
 import com.newstest.android.newstest.data.network.entity.Article;
+import com.newstest.android.newstest.utils.Constant;
+
 
 import java.util.Objects;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class DetailFragment extends Fragment {
 
-    Button buttonBack,buttonContinueReading;
+    @BindView(R.id.button_back)
+    Button buttonBack;
+    @BindView(R.id.button_continue)
+    Button buttonContinueReading;
+    @BindView(R.id.news_imageview)
     ImageView imageViewNews;
-    TextView textViewTitle,textViewPublishDate,textViewDescription;
+    @BindView(R.id.news_title)
+    TextView textViewTitle;
+    @BindView(R.id.news_publish_date)
+    TextView textViewPublishDate;
+    @BindView(R.id.news_description)
+    TextView textViewDescription;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_detail,container,false);
+        View view = inflater.inflate(R.layout.fragment_detail, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initView(view);
         initListeners();
         setData();
     }
 
 
     public void onClickContinueReading () {
-        MainActivity context = ((MainActivity)Objects.requireNonNull(getActivity()));
-        Article article = context.newsviewModel.getNewsLiveDataArticle().getValue();
-        goToUrl(article.getUrl());
+        if(Constant.checkInternetConnection(Objects.requireNonNull(getContext())))
+        {
+            Article article = getArticle();
+            goToUrl(article.getUrl());
+        }
+        else
+        {
+            Constant.showToast(getContext(),R.string.network_error);
+        }
     }
 
     private void goToUrl (String url) {
@@ -51,15 +72,26 @@ public class DetailFragment extends Fragment {
         startActivity(launchBrowser);
     }
 
+    @Nullable
+    @Override
+    public MainActivity getContext() {
+        return (MainActivity) getActivity();
+    }
+
+    private Article getArticle(){
+
+        return (Objects.requireNonNull(getContext()).newsviewModel.getNewsLiveDataArticle().getValue());
+
+    }
+
     private void setData() {
 
-        MainActivity context = ((MainActivity)Objects.requireNonNull(getActivity()));
-        Article article = context.newsviewModel.getNewsLiveDataArticle().getValue();
+        Article article = getArticle();
 
         textViewTitle.setText(article.getTitle());
         textViewPublishDate.setText(article.getPublishedAt());
         textViewDescription.setText(article.getDescription());
-        ((MainActivity)Objects.requireNonNull(getActivity())).picasso.with(context)
+        (Objects.requireNonNull(getContext())).picasso.with(getContext())
                 .load(article.getUrlToImage())
                 .into(imageViewNews);
 
@@ -72,19 +104,9 @@ public class DetailFragment extends Fragment {
 
     }
 
-    private void initView(View view) {
-
-        buttonBack = view.findViewById(R.id.button_back);
-        buttonContinueReading=view.findViewById(R.id.button_continue);
-        imageViewNews=view.findViewById(R.id.news_imageview);
-        textViewTitle=view.findViewById(R.id.news_title);
-        textViewDescription=view.findViewById(R.id.news_description);
-        textViewPublishDate=view.findViewById(R.id.news_publish_date);
-    }
-
     private void onDetailBackPressed()
     {
-        ((MainActivity)getActivity()).hideDetailFragment();
+        (Objects.requireNonNull(getContext())).hideDetailFragment();
     }
 
 }

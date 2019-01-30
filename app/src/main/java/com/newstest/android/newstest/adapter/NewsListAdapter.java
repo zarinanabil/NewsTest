@@ -8,38 +8,39 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.newstest.android.newstest.MyApplication;
 import com.newstest.android.newstest.R;
 import com.newstest.android.newstest.data.network.entity.Article;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NewsViewHolder> {
 
-    List<Article> newsList;
+    private List<Article> newsList;
     private OnNewsItemClickListener eventListener;
-    Picasso picasso;
-    DisplayMetrics displayMetrics;
-    Context context;
+    private Picasso picasso;
+    private Context context;
 
     class NewsViewHolder extends RecyclerView.ViewHolder{
 
+        @BindView(R.id.text_view_title)
         TextView textViewTitle;
+        @BindView(R.id.image_view_icon)
         ImageView imageViewIcon;
+        @BindView(R.id.card_view)
         CardView cardView;
 
-        public NewsViewHolder(@NonNull View itemView) {
+        NewsViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            this.textViewTitle = (TextView) itemView.findViewById(R.id.text_view_title);
-            this.imageViewIcon = (ImageView) itemView.findViewById(R.id.image_view_icon);
-            this.cardView = itemView.findViewById(R.id.card_view);
+            ButterKnife.bind(this,itemView);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -76,7 +77,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NewsVi
     }
 
     @Override
-    public void onBindViewHolder(final NewsViewHolder holder, final int listPosition) {
+    public void onBindViewHolder(@NonNull final NewsViewHolder holder, final int listPosition) {
 
         DisplayMetrics displaymetrics = context.getResources().getDisplayMetrics();
         int height = displaymetrics.heightPixels;
@@ -89,7 +90,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NewsVi
         Article article = newsList.get(listPosition);
         holder.textViewTitle.setText(article.getTitle());
 
-        picasso.with(holder.imageViewIcon.getContext())
+        Picasso.with(holder.imageViewIcon.getContext())
                 .load(article.getUrlToImage())
                 .into(holder.imageViewIcon);
     }

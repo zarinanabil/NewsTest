@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">testapp</string>
+    <string name="app_name">News Test</string>
     <string name="network_error">No network connection.</string>
-    <string name="errorString">Something went wrong, Please try again.</string>
+    <string name="error_string">Something went wrong, Please try again.</string>
     <string name="back_button">Back Button</string>
     <string name="continue_reading">... Continue Reading</string>
+    <string name="please_wait">Please wait ...</string>
 </resources>
