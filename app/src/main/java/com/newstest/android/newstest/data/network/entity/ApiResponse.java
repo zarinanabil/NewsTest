@@ -18,9 +18,7 @@ import static com.newstest.android.newstest.utils.Status.SUCCESS;
 
 public class ApiResponse {
 
- /*   @SerializedName("status")
-    @Expose
-    public String status;*/
+
     @SerializedName("totalResults")
     @Expose
     private Integer totalResults;
@@ -30,27 +28,16 @@ public class ApiResponse {
 
     public final Status status;
 
-    /*@Nullable
-    public final List<Article> data;
-*/
+
     @Nullable
     public final Throwable error;
 
     private ApiResponse(Status status, @Nullable List<Article> articles, @Nullable Throwable error) {
         this.status=status;
-        //this.status = status;
         this.articles = articles;
         this.error = error;
     }
 
-
-    /*public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }*/
 
     public Integer getTotalResults() {
         return totalResults;
@@ -75,7 +62,6 @@ public class ApiResponse {
     }
 
     public static ApiResponse success(@NonNull ApiResponse apiResponse) {
-        //return new ApiResponse(SUCCESS, articles, null);
         return new ApiResponse(SUCCESS, apiResponse.getArticles(), null);
     }
 

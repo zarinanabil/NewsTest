@@ -17,5 +17,4 @@ public interface AppComponent {
     ViewModelProvider.Factory getViewModelFactory();
 
     Picasso getPicasso();
-    //void doInjection(MainActivity mainActivity);
 }

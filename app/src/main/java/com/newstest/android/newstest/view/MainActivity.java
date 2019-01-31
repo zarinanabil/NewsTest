@@ -68,10 +68,10 @@ public class MainActivity extends AppCompatActivity implements NewsListAdapter.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initviews();
+        prepareviews();
     }
 
-    private void initviews() {
+    private void prepareviews() {
 
         ButterKnife.bind(this);
 
